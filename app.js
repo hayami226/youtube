@@ -18,6 +18,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extened:true}));
 app.use(morgan("dev"));
 app.use(localsMiddleware);
+// Helmet 버전 때문에 추가된 소스
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "script-src 'self' https://archive.org");
+    next();
+});
 
 app.use(routes.home, globalRouter);
 app.use(routes.users, userRouter);
