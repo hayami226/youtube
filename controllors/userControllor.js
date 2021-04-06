@@ -36,10 +36,41 @@ export const getLogin = (req, res) => {
 export const postLogin = passport.authenticate("local", {
     failureRedirect: routes.login,
     successRedirect: routes.home
-})
+});
+
+export const githubLogin = passport.authenticate("github");
+
+// 안쓰는 매개변수는 _, __로 작성
+export const githubLoginCallback = async (_, __, profile, cb) => {
+    const {
+      _json: { id, avatar_url, name, email }
+    } = profile;
+    try {
+      // 기존 user 에서 깃허브와 같은 이메일을 쓰고 있을 때 처리
+      const user = await User.findOne({ email });
+      if (user) {
+        user.githubId = id;
+        user.save();
+        return cb(null, user); // 성공 시 error 자리에 null로
+      }
+      const newUser = await User.create({
+        email,
+        name,
+        githubId: id,
+        avatarUrl: avatar_url
+      });
+      return cb(null, newUser); // 성공 시 error 자리에 null로
+    } catch (error) {
+      return cb(error);
+    }
+  };
+
+export const postGithubLogIn = (req, res) => {
+    res.redirect(routes.home);
+};
 
 export const logout = (req, res) => {
-    // TODO : Process Log Out
+    req.logout();
     res.redirect(routes.home);
 }
 
