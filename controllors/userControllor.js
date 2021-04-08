@@ -49,9 +49,10 @@ export const githubLoginCallback = async (_, __, profile, cb) => {
       // 기존 user 에서 깃허브와 같은 이메일을 쓰고 있을 때 처리
       const user = await User.findOne({ email });
       if (user) {
+        console.log("Ex")
         user.githubId = id;
-        user.avatarUrl = avatarUrl;
-        user.name = name;
+        user.avatarUrl = user.avatarUrl ? user.avatarUrl : avatarUrl;
+        user.name = user.name ? user.name : name;
         user.save();
         return cb(null, user); // 성공 시 error 자리에 null로
       }
@@ -122,5 +123,50 @@ export const userDetail = async (req, res) => {
     }
   };
 
-export const editProfile = (req, res) => res.render("editProfile", { pageTitle:"Edit Profile" });
-export const changePassword = (req, res) => res.render("changePassword", { pageTitle:"Change Password" });
+export const getEditProfile = (req, res) => {
+  res.render("editProfile", { pageTitle:"Edit Profile" });
+}
+
+export const postEditProfile = async (req, res) => {
+  const {
+    body: { name, email },
+    file
+  } = req;
+
+  try {
+    await User.findByIdAndUpdate(req.user._id, {
+      name,
+      email,
+      avatarUrl: file ? file.path : req.user.avatarUrl
+    });
+    res.redirect(routes.me);
+  }catch(error) {
+    res.redirect(`/users/${routes.editProfile}`);
+  }
+}
+
+export const getChangePassword = (req, res) => {
+  res.render("changePassword", { pageTitle:"Change Password" });
+}
+
+export const postChangePassword = async (req, res) => {
+  const {
+    body: {
+      oldPassword,
+      newPassword,
+      newPassword1
+      }
+    } = req;
+
+  try {
+    if(newPassword !== newPassword1) {
+      res.status(400);
+      res.redirect(`/users/${routes.changePassword}`);
+      return;
+    }
+    await req.user.changePassword(oldPassword, newPassword1);
+    res.redirect(routes.me);
+  } catch(error) {
+    res.redirect(`/users/${routes.changePassword}`);
+  }
+}

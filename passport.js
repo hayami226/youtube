@@ -35,4 +35,6 @@ passport.use(
 // 쿠키에 id를 저장
 passport.serializeUser((user, done) => done(null, user));
 // 쿠키에 저장한 id로 사용자 정보 찾기
-passport.deserializeUser((user, done) => done(null, user));
+passport.deserializeUser((id, done) => {
+    User.findById(id, (err, user) => done(err, user));
+  });
