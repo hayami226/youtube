@@ -49,7 +49,6 @@ export const githubLoginCallback = async (_, __, profile, cb) => {
       // 기존 user 에서 깃허브와 같은 이메일을 쓰고 있을 때 처리
       const user = await User.findOne({ email });
       if (user) {
-        console.log("Ex")
         user.githubId = id;
         user.avatarUrl = user.avatarUrl ? user.avatarUrl : avatarUrl;
         user.name = user.name ? user.name : name;
