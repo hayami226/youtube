@@ -1,6 +1,7 @@
 import passport from "passport";
 import routes from "../routes";
 import User from "../models/User";
+import Video from "../models/Video";
 
 export const getJoin = (req, res) => {
     res.render("join", { pageTitle:"Join" });
@@ -45,6 +46,7 @@ export const githubLoginCallback = async (_, __, profile, cb) => {
     const {
       _json: { id, avatar_url: avatarUrl, name, email }
     } = profile;
+
     try {
       // 기존 user 에서 깃허브와 같은 이메일을 쓰고 있을 때 처리
       const user = await User.findOne({ email });
@@ -106,9 +108,13 @@ export const logout = (req, res) => {
     res.redirect(routes.home);
 }
 
-export const getMe = (req, res) => {
-  console.log( req.user)
-    res.render("userDetail", { pageTitle:"User Detail", user: req.user });
+export const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate("videos");
+    res.render("userDetail", { pageTitle:"User Detail", user });
+  } catch(error) {
+    res.redirect(routes.home);
+  }
 }
 
 export const userDetail = async (req, res) => {
@@ -116,7 +122,7 @@ export const userDetail = async (req, res) => {
       params: { id }
     } = req;
     try {
-      const user = await User.findById(id);
+      const user = await User.findById(id).populate("videos");
       user.avatarUrl = '\\' + user.avatarUrl;
       res.render("userDetail", { pageTitle: "User Detail", user });
     } catch (error) {
