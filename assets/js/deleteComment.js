@@ -13,7 +13,7 @@ const deleteComment = (li) => {
     decreaseNumber();  
 }
 
-const handleDeleteBtn = async (event) => {
+export const handleDeleteBtn = async (event) => {
     const id = event.target.previousSibling.dataset.id;
     const response = await axios({
         url: `/api/${id}/comment/delete`,

@@ -136,9 +136,9 @@ export const postRegisterView = async (req, res) => {
         });
         video.comments.push(newComment.id);
         video.save();
+        res.end(newComment.id);
       } catch(error) {
         res.status(400);
-      } finally {
         res.end();
       }
   }

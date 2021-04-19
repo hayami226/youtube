@@ -1,4 +1,5 @@
 import axios from "axios";
+import { handleDeleteBtn } from "./deleteComment";
 
 const addCommentForm = document.getElementById("jsAddComment");
 const commentList = document.getElementById("jsCommentList");
@@ -8,12 +9,18 @@ const increaseNumber = () => {
     commentNumber.innerHTML = parseInt(commentNumber.innerHTML) + 1;
 }
 
-const addComment = (comment) => {
+const addComment = (comment, id) => {
     const li = document.createElement("li");
     const span = document.createElement("span");
+    span.dataset.id = id;
     span.innerHTML = comment;
+    const a = document.createElement("a");
+    a.innerHTML = "❌";
+    a.className = "jsDeleteComment";
     li.appendChild(span);
+    li.appendChild(a);
     commentList.prepend(li);
+    a.addEventListener("click", handleDeleteBtn);
     increaseNumber();
 }
 
@@ -28,7 +35,7 @@ const sendComment = async (comment) => {
     });
 
     if(response.status === 200) {
-        addComment(comment);
+        addComment(comment, response.data);
     }
 }
 
