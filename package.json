@@ -59,6 +59,5 @@
     "prestart": "npm run build"
   },
   "devDependencies": {
-
   }
 }
