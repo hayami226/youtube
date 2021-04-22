@@ -89,7 +89,7 @@ const formatDate = seconds => {
     }
     return `${hours}:${minutes}:${totalSeconds}`;
 };
-
+//
 function setCurrentTime() {
     currentTime.innerHTML = formatDate(Math.floor(videoPlayer.currentTime));
 }
