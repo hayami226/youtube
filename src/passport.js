@@ -13,9 +13,7 @@ passport.use(
     new GithubStrategy({
         clientID: process.env.GH_ID,
         clientSecret: process.env.GH_SECRET,
-        callbackURL: process.env.PRODUCTION
-        ? `https://shrouded-wave-62913.herokuapp.com${routes.githubCallback}`
-        : `http://localhost:4000${routes.githubCallback}`
+        callbackURL: `https://shrouded-wave-62913.herokuapp.com${routes.githubCallback}`
     },
     githubLoginCallback
     )
